@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset=utf-8>
+<style>
+p { background-color:rgb(200, 210, 210); }
+h1 { background-color:rgb(240, 200, 200);}
+</style>
+<title> MandleBrot Set </title>
+</head>
+
+<body>
+  <h1> MandelBrot Set </h1>
+  ....
+  Options :
+  <button type="button" onclick="zoomin();">zoom in</button>
+  <button type="button" onclick="zoomout();">zoom out</button>
+  <button type="button" onclick="moredetail();">More details</button>
+  <button type="button" onclick="lessdetail();">Less details</button>
+  ........
+  Move :
+  <button type="button" onclick="up();">Up</button>
+  <button type="button" onclick="down();">Down</button>
+  <button type="button" onclick="right();">Right</button>
+  <button type="button" onclick="left();">Left</button>
+  ........
+  <button type="button" onclick="defaultImage();">Default Image</button>  
+  ....
+  <p></p>
+
+
+<canvas id="mycanvas" width="1200" height="500" style="border:5px solid #5333f3;"   //defines canvas to be created.
+        onmousedrag="moveHandler(event);"
+        onmousedown="mouseDownHandler(event);">
+  This text is displayed if your browser does not support HTML5 Canvas.
+</canvas>
+
+<script type="text/javascript">
+  <!--
+
+    function moveHandler(event)
+    {
+    }
+    function mouseDownHandler(event)
+    {
+    }
+
+    var xPos=-1, yPos=0;
+    var scale=4;
+    var sign=0;
+    var factor;
+    var maxIter=75;
+    var dx=0.5, dy=0.5;
+
+    function createImage(xPos, yPos, scale)     //function to create mandel brot set image.
+    {
+        factor = 1;
+        var i;
+        for(i=0; i<scale; i++)
+        { factor = factor*4; }
+
+      var x, y, xVal, yVal, xVar, yVar, xTemp, yTemp;
+      var absVal;
+      var nIter;
+      var col1, col2, col3;
+      var colorr = new Array(2);
+      colorr[0]="rgb(255,0,0)";
+      colorr[1]="rgb(0,0,255)";
+
+      var mycanvas = document.getElementById('mycanvas');
+      var context = mycanvas.getContext('2d');
+	    context.clearRect(0, 0, mycanvas.width, mycanvas.height);
+
+      for(x=10; x<1190; x=x+dx)
+      {
+         for(y=10; y<490; y=y+dy)
+    	 {
+    	 	xVal = xPos + (x-550)/factor;
+    	 	yVal = yPos + (y-250)/factor;
+    	 	xVar=0;
+    	 	yVar=0;
+        nIter=0;
+        absVal=0;
+
+            while( absVal<3 && nIter<maxIter+2)     //this loop does the iterations.
+            {
+            	xTemp = xVar*xVar - yVar*yVar + xVal;
+            	yTemp = 2*xVar*yVar + yVal;
+            	xVar = xTemp;
+            	yVar = yTemp;
+
+            	absVal = xVar*xVar + yVar*yVar;
+            	nIter = nIter+1;
+			      }
+
+             if(nIter>maxIter-5)       //this part gives color to the specific pixel
+			       {context.fillStyle = "rgb(0, 0, 25)";
+              context.fillRect(x,y,dx,dy);
+             }
+             if( nIter>maxIter/16 && nIter <= maxIter - maxIter/16)
+             { var col1 = (24*nIter/maxIter).toPrecision(2);
+              var col2 = 10*col1 + 30;
+              context.fillStyle = "rgb("+col2.toString()+",0,0)";
+              context.fillRect(x,y,dx,dy);
+             }
+             if(nIter <= maxIter/16)
+             {
+              context.fillStyle = "rgb(45,0,0)";
+              context.fillRect(x,y,dx,dy);
+             }
+
+			      // context.fillRect(x-dx/2,y-dy/2,dx,dy);
+    	 }
+      }
+    }
+
+    function callCreateImage()
+    {
+      createImage(xPos, yPos, scale);
+    }
+
+    function zoomin()
+    { scale = scale+1;
+      callCreateImage();
+    }
+    function zoomout()
+    { if(scale>0)
+      {
+      scale = scale-1;
+      callCreateImage();
+      }
+    }
+    function moredetail()
+    { if(dx>0.15)
+      {
+      maxIter = maxIter*2;
+      dx = dx/2;
+      dy = dy/2;
+      callCreateImage();
+      }
+    }
+    function lessdetail()
+    { maxIter = maxIter/2;
+      dx = dx*2;
+      dy = dy*2;
+      callCreateImage();
+    }
+
+    function up()
+    {  yPos = yPos-250/factor;
+      callCreateImage();
+    }
+    function down()
+    {  yPos = yPos+250/factor;
+      callCreateImage();
+    }
+    function right()
+    {  xPos = xPos+550/factor;
+      callCreateImage();
+    }
+    function left()
+    {  xPos = xPos-550/factor;
+      callCreateImage();
+    }
+
+    function defaultImage()
+    { xPos=-1, yPos=0;
+      scale=4;
+      dx=0.5; dy=0.5;
+      maxIter=64;
+      callCreateImage();
+    }
+
+    callCreateImage();
+ //-->
+</script>
+<p> Kindly wait when Image is being loaded.(Button will stay pressed untill the new image is loaded.) </p>
+<p> Details : <br>
+    1. 'Zoom in' and 'Zoom out' are w.r.t the center of current image. Zoom is 5x. <br>
+    2. 'More detail' and 'Less detail' options change the pixel size and number of iterations made per pixel. More detail option decreases size of pixel by factor of 1.5 and increases number of iterations by factor of 1.5.(more details will take more time to create the image!). <br>
+    3. Movement options shift the center towards corresponding end. <br> </p>
+</body>
+</html>
